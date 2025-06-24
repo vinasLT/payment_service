@@ -8,6 +8,8 @@ STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET=os.getenv("STRIPE_WEBHOOK_SECRET")
 CARFAX_SERVICE_URL=os.getenv("CARFAX_SERVICE_URL")
 
+DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+
 DB_HOST = os.getenv("PAYMENT_DB_HOST")
 DB_PORT = os.getenv("PAYMENT_DB_PORT")
 DB_USER = os.getenv("PAYMENT_DB_USER")
