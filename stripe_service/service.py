@@ -36,13 +36,15 @@ class StripeService:
 
     @classmethod
     def decode_webhook(cls, event: dict) -> WebhookData:
-        data = event["data"]["object"]
-        payment_intent = data.get("payment_intent")
-        amount_total = data.get("amount_total")
-        currency = data.get("currency")
-        checkout_id = data.get("id")
-        status = data.get("status")
-        payment_status = data.get("payment_status")
+        print(event)
+        webhook_object = event["data"]["object"]
+        payment_intent = webhook_object.get("payment_intent", "")
+        amount_total = webhook_object.get("amount_total", 0)
+        currency = webhook_object.get("currency", "")
+        checkout_id = webhook_object.get("id", "")
+        status = webhook_object.get("status", "")
+        payment_status = webhook_object.get("payment_status", "")
+
         return WebhookData(payment_intent=payment_intent, amount_total=amount_total,
                            currency=currency, checkout_id=checkout_id, status=status, payment_status=payment_status)
 

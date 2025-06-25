@@ -20,6 +20,6 @@ class PaymentService(BaseService[Payment, PaymentCreate, PaymentUpdate]):
 
             )
         )
-        return result.scalar().first()
+        return result.scalar_one_or_none()
 
 

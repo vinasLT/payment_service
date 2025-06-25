@@ -55,14 +55,17 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
             return JSONResponse(content={"success": False})
 
     event_type = event['type']
-    data = StripeService.decode_webhook(event)
+
     async with PaymentService() as payment:
-        session = await payment.get_by_provider_payment_id(data.checkout_id)
-        if event_type == 'checkout.session.completed':
-            await payment.update(session.id, PaymentUpdate(status=PaymentStatus.COMPLETED))
-            if session.purpose == Purposes.CARFAX:
-                await send_request_to_webhook(f'{CARFAX_SERVICE_URL}internal/carfax/webhook/{session.purpose_external_id}/paid')
-        elif event_type == 'checkout.session.expired':
-            await payment.update(session.id, PaymentUpdate(status=PaymentStatus.FAILED))
+        if event_type.startswith('checkout.session.'):
+            data = StripeService.decode_webhook(event)
+            if event_type == 'checkout.session.completed':
+                session = await payment.get_by_provider_payment_id(data.checkout_id)
+                await payment.update(session.id, PaymentUpdate(status=PaymentStatus.COMPLETED))
+                if session.purpose == Purposes.CARFAX:
+                    await send_request_to_webhook(f'{CARFAX_SERVICE_URL}internal/carfax/webhook/{session.purpose_external_id}/paid')
+            elif event_type == 'checkout.session.expired':
+                session = await payment.get_by_provider_payment_id(data.checkout_id)
+                await payment.update(session.id, PaymentUpdate(status=PaymentStatus.FAILED))
 
     return JSONResponse(content={"success": True})
