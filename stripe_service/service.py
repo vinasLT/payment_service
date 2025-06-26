@@ -8,7 +8,7 @@ from stripe_service.types import Product, Price, ProductData, WebhookData
 class StripeService:
     CARFAX = Product(
         price_data=Price(
-            product_data=ProductData(name="CARFAX"),
+            product_data=ProductData(name="CARFAX", description="Išsamus „Carfax“ ataskaitos pirkimas — sužinokite visą transporto priemonės istoriją: avarijos, rida, techninė priežiūra, savininkų skaičius ir kita svarbi informacija."),
             unit_amount=100*2
             ),
         quantity=1,
@@ -36,7 +36,6 @@ class StripeService:
 
     @classmethod
     def decode_webhook(cls, event: dict) -> WebhookData:
-        print(event)
         webhook_object = event["data"]["object"]
         payment_intent = webhook_object.get("payment_intent", "")
         amount_total = webhook_object.get("amount_total", 0)

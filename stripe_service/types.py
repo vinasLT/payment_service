@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class ProductData(BaseModel):
     name: str
+    description: str
 
 class Price(BaseModel):
     currency: str = 'EUR'
