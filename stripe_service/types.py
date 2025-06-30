@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 class ProductData(BaseModel):
@@ -15,7 +17,7 @@ class Product(BaseModel):
     quantity: int
 
 class WebhookData(BaseModel):
-    payment_intent: str
+    payment_intent: Optional[str] = None
     amount_total: int
     status: str
     payment_status: str
