@@ -1,17 +1,32 @@
-import os
+from enum import Enum
 
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 
-STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY")
-STRIPE_WEBHOOK_SECRET=os.getenv("STRIPE_WEBHOOK_SECRET")
-CARFAX_SERVICE_URL=os.getenv("CARFAX_SERVICE_URL")
 
-DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+class Environment(str, Enum):
+    DEVELOPMENT = "development"
+    PRODUCTION = "production"
 
-DB_HOST = os.getenv("PAYMENT_DB_HOST")
-DB_PORT = os.getenv("PAYMENT_DB_PORT")
-DB_USER = os.getenv("PAYMENT_DB_USER")
-DB_PASSWORD = os.getenv("PAYMENT_DB_PASS")
-DB_NAME = os.getenv("PAYMENT_DB_NAME")
+class Settings(BaseSettings):
+    #Application
+    APP_NAME: str = "payment-service"
+    DEBUG: bool = True
+    ROOT_PATH: str = ''
+    ENVIRONMENT: Environment = Environment.DEVELOPMENT
+
+    # Stripe
+    STRIPE_SECRET_KEY: str
+    STRIPE_WEBHOOK_SECRET: str
+    CARFAX_SERVICE_URL: str
+
+    # Database
+    DB_HOST: str = "localhost"
+    DB_PORT: str = "5432"
+    DB_NAME: str = "test_db"
+    DB_USER: str = "postgres"
+    DB_PASS: str = "testpass"
+
+settings = Settings()
