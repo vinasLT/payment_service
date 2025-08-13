@@ -3,10 +3,10 @@ import json
 import stripe
 from pydantic import HttpUrl
 
-from config import STRIPE_WEBHOOK_SECRET, CARFAX_SERVICE_URL
 from fastapi import Request, Header, HTTPException
 from fastapi.responses import JSONResponse
 
+from config import settings
 from database.crud.payment import PaymentService
 from database.schemas.payment import Purposes, PaymentCreate, PaymentUpdate, PaymentStatus
 from schemas import StripeCheckOutIn, StripeCheckOutOut
@@ -44,12 +44,12 @@ async def stripe_webhook(
     except json.JSONDecodeError:
         return JSONResponse({"success": False})
 
-    if STRIPE_WEBHOOK_SECRET:
+    if settings.STRIPE_WEBHOOK_SECRET:
         try:
             event = stripe.Webhook.construct_event(
                 payload=payload,
                 sig_header=stripe_signature,
-                secret=STRIPE_WEBHOOK_SECRET,
+                secret=settings.STRIPE_WEBHOOK_SECRET,
             )
         except stripe.error.SignatureVerificationError:
             return JSONResponse({"success": False})
@@ -67,7 +67,7 @@ async def stripe_webhook(
                 )
                 if session.purpose == Purposes.CARFAX:
                     await send_request_to_webhook(
-                        f"{CARFAX_SERVICE_URL}internal/carfax/webhook/{session.purpose_external_id}/paid"
+                        f"{settings.CARFAX_SERVICE_URL}internal/carfax/webhook/{session.purpose_external_id}/paid"
                     )
         elif event_type == "checkout.session.expired":
             ...

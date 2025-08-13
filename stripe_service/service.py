@@ -1,7 +1,7 @@
 import stripe
 from stripe.checkout import Session
 
-from config import STRIPE_SECRET_KEY
+from config import settings
 from stripe_service.types import Product, Price, ProductData, WebhookData
 
 
@@ -19,7 +19,7 @@ class StripeService:
         self.success_url = success_url
 
         self.cancel_url = cancel_url
-        stripe.api_key = STRIPE_SECRET_KEY
+        stripe.api_key = settings.STRIPE_SECRET_KEY
 
     def create_checkout_session(self, product: Product) -> Session:
         try:
