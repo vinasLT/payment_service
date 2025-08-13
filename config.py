@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     ROOT_PATH: str = ''
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
+    @property
+    def enable_docs(self) -> bool:
+        return self.ENVIRONMENT in [Environment.DEVELOPMENT]
+
     # Stripe
     STRIPE_SECRET_KEY: str
     STRIPE_WEBHOOK_SECRET: str
