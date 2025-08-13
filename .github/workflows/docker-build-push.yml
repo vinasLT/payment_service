@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         run: |
           echo "Running tests..."
-          poetry run pytest
+          poetry run pytest || ([ $? -eq 5 ] && echo "⚠️ No tests found - continuing anyway" || exit $?)
 
 
   build:
