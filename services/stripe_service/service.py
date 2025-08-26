@@ -2,7 +2,7 @@ import stripe
 from stripe.checkout import Session
 
 from config import settings
-from stripe_service.types import Product, Price, ProductData, WebhookData
+from services.stripe_service.types import Product, Price, ProductData, WebhookData
 
 
 class StripeService:

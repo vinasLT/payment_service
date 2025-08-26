@@ -12,17 +12,9 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
 class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: Type[ModelType]):
+    def __init__(self, model: Type[ModelType], db: AsyncSession) -> None:
         self.model = model
-        self.session: AsyncSession | None = None
-
-    async def __aenter__(self):
-        self.session = AsyncSessionLocal()
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        if self.session:
-            await self.session.close()
+        self.session = db
 
     async def get(self, obj_id: int) -> Optional[ModelType]:
         return await self.session.get(self.model, obj_id)

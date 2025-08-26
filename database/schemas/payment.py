@@ -19,7 +19,7 @@ class PaymentBase(BaseModel):
     amount: float
     status: PaymentStatus = PaymentStatus.PENDING
     purpose: Purposes
-    purpose_external_id: int = None
+    purpose_external_id: str = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     provider_payment_id: Optional[str] = None
@@ -32,7 +32,7 @@ class PaymentUpdate(BaseModel):
     source: Optional[str] = None
     provider: Optional[str] = None
     purpose: Purposes = None
-    purpose_external_id: Optional[int] = None
+    purpose_external_id: Optional[str] = None
     amount: Optional[float] = None
     status: Optional[PaymentStatus] = None
     provider_payment_id: Optional[str] = None

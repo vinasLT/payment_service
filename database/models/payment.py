@@ -23,7 +23,7 @@ class Payment(Base):
     provider_payment_id = Column(String, nullable=True)
 
     purpose = Column(String, nullable=False)
-    purpose_external_id = Column(Integer, nullable=False)
+    purpose_external_id = Column(String, nullable=False)
 
     __table_args__ = (
         Index('ix_user_source', 'user_external_id', 'source'),
