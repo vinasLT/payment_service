@@ -28,7 +28,6 @@ class Settings(BaseSettings):
     # rabbitmq
     RABBITMQ_URL: str = 'amqp://guest:guest@localhost:5672/'
     RABBITMQ_EXCHANGE_NAME: str = 'events'
-    RABBITMQ_QUEUE_NAME: str = 'payments'
 
     #rpc
     GRPC_SERVER_PORT: int = 50053
@@ -37,8 +36,6 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ''
     STRIPE_WEBHOOK_SECRET: str = ''
 
-    class Config:
-        env_file = ".env"
 
 settings = Settings()
 
