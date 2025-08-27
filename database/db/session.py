@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSession, async_sessionmaker
 from config import settings
@@ -19,4 +20,9 @@ async def get_db()-> AsyncGenerator[AsyncSession | Any, Any]:
     async with AsyncSessionLocal() as session:
         yield session
 
+
+@asynccontextmanager
+async def get_db_context():
+    async with AsyncSessionLocal() as session:
+        yield session
 

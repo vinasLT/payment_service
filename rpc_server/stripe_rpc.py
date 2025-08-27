@@ -2,7 +2,7 @@ import grpc
 
 from core.logger import logger
 from database.crud.payment import PaymentService
-from database.db.session import get_db
+from database.db.session import get_db, get_db_context
 from database.schemas.payment import Purposes, PaymentCreate
 from rpc_server.gen.python.payment.v1 import stripe_pb2_grpc, stripe_pb2
 from services.stripe_service.service import StripeService
@@ -29,7 +29,7 @@ class StripeRpc(stripe_pb2_grpc.StripeServiceServicer):
 
             stripe_service = StripeService(success_url=str(request.success_link), cancel_url=str(request.cancel_link))
             session = stripe_service.create_checkout_session(product)
-            async with get_db() as db:
+            async with get_db_context() as db:
                 payment_service = PaymentService(db)
                 await payment_service.create(PaymentCreate(user_external_id=request.user_external_id, source=request.source,
                                                            provider='STRIPE', amount=product.price_data.unit_amount,
