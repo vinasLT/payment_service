@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 
 from core.logger import logger
 from database.crud.payment import PaymentService
-from database.db.session import get_async_db
+from database.db.session import get_db
 from database.models.payment import Payment
 from database.schemas.payment import Purposes, PaymentUpdate, PaymentStatus
 from services.rabbit_service import RabbitMQPublisher
@@ -22,7 +22,7 @@ stripe_public_router = APIRouter()
 async def stripe_webhook(
     request: Request,
     stripe_signature: str = Header(alias="Stripe-Signature"),
-    db: AsyncSession = Depends(get_async_db)
+    db: AsyncSession = Depends(get_db)
 ):
     payload = await request.body()
     try:

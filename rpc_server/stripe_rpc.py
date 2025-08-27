@@ -29,15 +29,15 @@ class StripeRpc(stripe_pb2_grpc.StripeServiceServicer):
 
             stripe_service = StripeService(success_url=str(request.success_link), cancel_url=str(request.cancel_link))
             session = stripe_service.create_checkout_session(product)
-            db = await get_db()
-            payment_service = PaymentService(db)
-            await payment_service.create(PaymentCreate(user_external_id=request.user_external_id, source=request.source,
-                                                       provider='STRIPE', amount=product.price_data.unit_amount,
-                                                       purpose=product.price_data.product_data.name,
-                                                       provider_payment_id=session.id,
-                                                       purpose_external_id=request.purpose_external_id, ))
+            async with get_db() as db:
+                payment_service = PaymentService(db)
+                await payment_service.create(PaymentCreate(user_external_id=request.user_external_id, source=request.source,
+                                                           provider='STRIPE', amount=product.price_data.unit_amount,
+                                                           purpose=product.price_data.product_data.name,
+                                                           provider_payment_id=session.id,
+                                                           purpose_external_id=request.purpose_external_id, ))
 
-            return stripe_pb2.GetCheckoutLinkResponse(link=session.url)
+                return stripe_pb2.GetCheckoutLinkResponse(link=session.url)
         except Exception as e:
             logger.error(f"Error while rpc request: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
