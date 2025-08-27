@@ -3,6 +3,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi_problem.handler import new_exception_handler, add_exception_handler
 
 from config import settings
+from router.health import health_router
 from router.stripe.private import stripe_private_router
 from router.stripe.public import stripe_public_router
 
@@ -31,6 +32,8 @@ private_endpoints.include_router(stripe_private_router, prefix="/stripe", tags=[
 
 app.include_router(public_endpoints)
 app.include_router(private_endpoints)
+
+app.include_router(health_router)
 
 
 if __name__ == '__main__':
