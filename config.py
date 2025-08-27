@@ -41,10 +41,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-# DB_HOST = os.getenv("PAYMENT_DB_HOST")
-# DB_PORT = os.getenv("PAYMENT_DB_PORT")
-# DB_USER = os.getenv("PAYMENT_DB_USER")
-# DB_PASSWORD = os.getenv("PAYMENT_DB_PASS")
-# DB_NAME = os.getenv("PAYMENT_DB_NAME")
