@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
-from pydantic import BaseModel
+
+from pydantic import BaseModel, ConfigDict
 
 
 class PaymentStatus(str, Enum):
@@ -19,27 +19,26 @@ class PaymentBase(BaseModel):
     amount: float
     status: PaymentStatus = PaymentStatus.PENDING
     purpose: Purposes
-    purpose_external_id: str = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    provider_payment_id: Optional[str] = None
+    purpose_external_id: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    provider_payment_id: str | None = None
 
 class PaymentCreate(PaymentBase):
     pass
 
 class PaymentUpdate(BaseModel):
-    user_external_id: Optional[str] = None
-    source: Optional[str] = None
-    provider: Optional[str] = None
-    purpose: Purposes = None
-    purpose_external_id: Optional[str] = None
-    amount: Optional[float] = None
-    status: Optional[PaymentStatus] = None
-    provider_payment_id: Optional[str] = None
-    updated_at: Optional[datetime] = None
+    user_external_id: str | None = None
+    source: str | None = None
+    provider: str | None = None
+    purpose: Purposes | None = None
+    purpose_external_id: str | None = None
+    amount: float | None = None
+    status: PaymentStatus | None = None
+    provider_payment_id: str | None = None
+    updated_at: datetime | None = None
 
 class PaymentRead(PaymentBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

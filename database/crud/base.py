@@ -1,10 +1,9 @@
-from typing import TypeVar, Generic, Type, Optional, Sequence
+from typing import TypeVar, Generic, Type, Sequence
 
+from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from pydantic import BaseModel
-
-from database.db.session import AsyncSessionLocal
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -16,11 +15,14 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
         self.session = db
 
-    async def get(self, obj_id: int) -> Optional[ModelType]:
+    async def get(self, obj_id: int) -> ModelType | None:
         return await self.session.get(self.model, obj_id)
 
-    async def get_all(self) -> Sequence[ModelType]:
-        result = await self.session.execute(select(self.model))
+    async def get_all(self, get_stmt: bool = False) -> Sequence[ModelType] | Select[tuple[ModelType]]:
+        stmt = select(self.model)
+        if get_stmt:
+            return stmt
+        result = await self.session.execute(stmt)
         return result.scalars().all()
 
     async def create(self, data: CreateSchemaType) -> ModelType:
@@ -30,7 +32,7 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await self.session.refresh(obj)
         return obj
 
-    async def update(self, obj_id: int, data: UpdateSchemaType) -> Optional[ModelType]:
+    async def update(self, obj_id: int, data: UpdateSchemaType) -> ModelType | None:
         obj = await self.get(obj_id)
         if not obj:
             return None

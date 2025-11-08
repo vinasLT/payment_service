@@ -2,7 +2,6 @@ import asyncio
 import json
 import uuid
 from datetime import datetime, UTC
-from typing import Optional
 
 from aio_pika import connect_robust, Message, ExchangeType, DeliveryMode
 from aio_pika.abc import AbstractRobustExchange
@@ -17,7 +16,7 @@ class RabbitMQPublisher:
         self.exchange_type = exchange_type
         self.connection = None
         self.channel = None
-        self.exchange: Optional[AbstractRobustExchange] = None
+        self.exchange: AbstractRobustExchange | None = None
 
     async def connect(self):
         self.connection = await connect_robust(self.url)

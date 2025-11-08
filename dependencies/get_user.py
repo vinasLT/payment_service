@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Any
+from typing import Any
 
 from pydantic import field_validator, Field, BaseModel
 from requests import Request
@@ -11,7 +11,7 @@ class User(BaseModel):
     email: str = Field("", description="Email пользователя")
     role: list[str] = Field(default_factory=list, description="Роли пользователя")
     permissions: list[str] = Field(default_factory=list, description="Список разрешений")
-    token_expires: Optional[datetime] = Field(None, description="Время истечения токена")
+    token_expires: datetime | None = Field(None, description="Время истечения токена")
 
     model_config = {
         "validate_assignment": True,
@@ -36,7 +36,7 @@ class User(BaseModel):
 
     @field_validator('token_expires', mode='before')
     @classmethod
-    def parse_expires(cls, v: Any) -> Optional[datetime]:
+    def parse_expires(cls, v: Any) -> datetime | None:
         if isinstance(v, str) and v.isdigit():
             try:
                 return datetime.fromtimestamp(int(v))

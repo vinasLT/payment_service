@@ -6,6 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+class Permissions(str, Enum):
+    PLAN_ALL_READ = 'payments.plan.all:read'
+    PLAN_ALL_WRITE = 'payments.plan.all:write'
+    PLAN_ALL_DELETE = 'payments.plan.all:delete'
+
+    ACCOUNT_ALL_READ = 'payments.account.all:read'
+    ACCOUNT_ALL_WRITE = 'payments.account.all:write'
+
+    ACCOUNT_OWN_READ = 'payments.plan.own:read'
+
+
 class Environment(str, Enum):
     DEVELOPMENT = "development"
     PRODUCTION = "production"

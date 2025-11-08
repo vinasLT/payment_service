@@ -8,7 +8,7 @@ class StripeCheckOutIn(BaseModel):
     cancel_link: HttpUrl
 
 
-
 class StripeCheckOutOut(BaseModel):
     link: HttpUrl
+
 

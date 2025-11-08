@@ -2,7 +2,7 @@ import grpc
 
 from core.logger import logger
 from database.crud.payment import PaymentService
-from database.db.session import get_db, get_db_context
+from database.db.session import get_db_context
 from database.schemas.payment import Purposes, PaymentCreate
 from rpc_server.gen.python.payment.v1 import stripe_pb2_grpc, stripe_pb2
 from services.stripe_service.service import StripeService
