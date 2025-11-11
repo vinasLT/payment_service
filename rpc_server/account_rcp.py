@@ -11,7 +11,8 @@ from database.db.session import get_db_context
 from database.models.plan import Plan
 from database.models.transaction import TransactionType
 from database.schemas.transaction import TransactionCreate
-from database.schemas.user_account import UserAccountUpdate
+from database.schemas.user_account import UserAccountUpdate, UserAccountCreate
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'gen', 'python'))
 from rpc_server.gen.python.payment.v1 import stripe_pb2, stripe_pb2_grpc
 
@@ -113,6 +114,10 @@ class AccountRcp(stripe_pb2_grpc.PaymentServiceServicer):
             async with get_db_context() as db:
                 account_service = UserAccountService(db)
                 account = await account_service.get_by_user_uuid(request.user_uuid)
+                if not account:
+                    account = await account_service.create(
+                        UserAccountCreate(user_uuid=request.user_uuid)
+                    )
 
                 response = stripe_pb2.GetUserAccountResponse(
                     user_uuid=account.user_uuid,
