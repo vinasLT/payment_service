@@ -7,6 +7,7 @@ from router.health import health_router
 from router.stripe.private import stripe_private_router
 from router.stripe.public import stripe_public_router
 from router.v1.private import private_router
+from router.v1.public import public_router
 
 docs_url = "/docs" if settings.enable_docs else None
 redoc_url = "/redoc"  if settings.enable_docs else None
@@ -32,6 +33,8 @@ public_endpoints.include_router(stripe_public_router, prefix="/stripe", tags=["S
 private_endpoints.include_router(stripe_private_router, prefix="/stripe", tags=["Stripe"])
 
 private_endpoints.include_router(private_router)
+
+public_endpoints.include_router(public_router)
 
 app.include_router(public_endpoints)
 app.include_router(private_endpoints)

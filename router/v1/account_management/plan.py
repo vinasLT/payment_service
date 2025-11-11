@@ -1,8 +1,6 @@
 from AuthTools.Permissions.dependencies import require_permissions
 from fastapi import APIRouter, Response, status
 from fastapi.params import Depends
-from fastapi_pagination import Params
-from fastapi_pagination.ext.sqlalchemy import apaginate
 from fastapi_problem import error as problem
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,22 +17,7 @@ from schemas.plan import PlanAssignPayload, PlansPage
 
 plan_management_router = APIRouter(prefix='/plan', tags=['Plan Management'])
 
-class PlanParams(Params):
-    size: int = 10
 
-@plan_management_router.get(
-    "",
-    response_model=PlansPage,
-    description=f"List plans, required permissions: {Permissions.PLAN_ALL_READ.value}",
-    dependencies=[Depends(require_permissions(Permissions.PLAN_ALL_READ))],
-)
-async def list_plans(
-    params: PlanParams = Depends(),
-    db: AsyncSession = Depends(get_db),
-):
-    service = PlanService(db)
-    plans_query = await service.get_all(get_stmt=True)
-    return await apaginate(db, plans_query, params)
 
 
 @plan_management_router.post(
