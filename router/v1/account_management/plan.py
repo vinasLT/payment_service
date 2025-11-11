@@ -1,8 +1,8 @@
 from AuthTools.Permissions.dependencies import require_permissions
 from fastapi import APIRouter, Response, status
 from fastapi.params import Depends
-from fastapi_pagination.async_paginator import apaginate
-from fastapi_pagination.utils import disable_installed_extensions_check
+from fastapi_pagination import Params
+from fastapi_pagination.ext.sqlalchemy import apaginate
 from fastapi_problem import error as problem
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,9 +16,11 @@ from database.models.transaction import TransactionType
 from schemas.account import UserAccountDetailed
 from schemas.plan import PlanAssignPayload, PlansPage
 
-disable_installed_extensions_check()
 
 plan_management_router = APIRouter(prefix='/plan', tags=['Plan Management'])
+
+class PlanParams(Params):
+    size: int = 10
 
 @plan_management_router.get(
     "",
@@ -26,9 +28,13 @@ plan_management_router = APIRouter(prefix='/plan', tags=['Plan Management'])
     description=f"List plans, required permissions: {Permissions.PLAN_ALL_READ.value}",
     dependencies=[Depends(require_permissions(Permissions.PLAN_ALL_READ))],
 )
-async def list_plans(db: AsyncSession = Depends(get_db)):
+async def list_plans(
+    params: PlanParams = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
     service = PlanService(db)
-    return await apaginate(await service.get_all())
+    plans_query = await service.get_all(get_stmt=True)
+    return await apaginate(db, plans_query, params)
 
 
 @plan_management_router.post(

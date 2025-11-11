@@ -9,8 +9,6 @@ class PlanBase(BaseModel):
     max_bid_one_time: float
     bid_power: int
     price: float
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
 
 
 class PlanCreate(PlanBase):

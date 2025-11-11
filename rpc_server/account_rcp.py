@@ -1,3 +1,6 @@
+import os
+import sys
+
 import grpc
 
 from core.logger import logger
@@ -9,6 +12,7 @@ from database.models.plan import Plan
 from database.models.transaction import TransactionType
 from database.schemas.transaction import TransactionCreate
 from database.schemas.user_account import UserAccountUpdate
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'gen', 'python'))
 from rpc_server.gen.python.payment.v1 import stripe_pb2, stripe_pb2_grpc
 
 

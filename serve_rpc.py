@@ -7,6 +7,8 @@ import sys
 from grpc_health.v1 import health_pb2_grpc, health_pb2
 from grpc_reflection.v1alpha import reflection
 
+from rpc_server.account_rcp import AccountRcp
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'rpc_server', 'gen', 'python'))
 
 from rpc_server.gen.python.payment.v1 import stripe_pb2_grpc, stripe_pb2
@@ -30,12 +32,14 @@ class GracefulServer:
         self.server.add_insecure_port(listen_addr)
 
         stripe_pb2_grpc.add_StripeServiceServicer_to_server(StripeRpc(), self.server)
+        stripe_pb2_grpc.add_PaymentServiceServicer_to_server(AccountRcp(), self.server)
         health_pb2_grpc.add_HealthServicer_to_server(HealthCheckServicer(), self.server)
 
         if settings.ENVIRONMENT == Environment.DEVELOPMENT:
             try:
                 service_names = [
                     stripe_pb2.DESCRIPTOR.services_by_name['StripeService'].full_name,
+                    stripe_pb2.DESCRIPTOR.services_by_name['PaymentService'].full_name,
                     health_pb2.DESCRIPTOR.services_by_name['Health'].full_name,
                     reflection.SERVICE_NAME,
                 ]

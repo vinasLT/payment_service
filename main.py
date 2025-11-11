@@ -25,7 +25,7 @@ add_exception_handler(app, eh)
 
 
 public_endpoints = APIRouter(prefix="/public", tags=["Public"])
-private_endpoints = APIRouter(prefix="/private", tags=["Private"])
+private_endpoints = APIRouter(prefix="/private")
 
 # stripe
 public_endpoints.include_router(stripe_public_router, prefix="/stripe", tags=["Stripe"])
