@@ -28,7 +28,7 @@ def test_list_plans_returns_paginated_result(api_client):
     )
     create_plan_record(session_factory, name="ListPlan", bid_power=10)
 
-    response = client.get("/private/v1/plan")
+    response = client.get("/public/v1/plan")
     assert response.status_code == 200
 
     payload = response.json()

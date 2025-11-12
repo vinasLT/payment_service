@@ -26,6 +26,7 @@ from database.db.session import get_db
 from database.models import Base
 from router.v1.account_management.account import account_management_router
 from router.v1.account_management.plan import plan_management_router
+from router.v1.account_management.plan_public import plan_public_router
 
 from helpers import build_user
 
@@ -75,6 +76,7 @@ def _create_app() -> FastAPI:
     test_app = FastAPI()
     test_app.include_router(account_management_router, prefix="/private/v1")
     test_app.include_router(plan_management_router, prefix="/private/v1")
+    test_app.include_router(plan_public_router, prefix="/public/v1")
     add_pagination(test_app)
     return test_app
 
