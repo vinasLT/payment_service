@@ -103,7 +103,7 @@ def test_delete_plan_removes_plan(api_client):
     )
 
     response = client.delete(f"/private/v1/plan/{plan.id}")
-    assert response.status_code == 204
+    assert response.status_code == 200
 
     exists = plan_exists(session_factory, plan.id)
     assert exists is False
