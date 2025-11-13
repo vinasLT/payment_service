@@ -65,7 +65,7 @@ async def update_plan(plan_id: int, plan_in: PlanUpdate, db: AsyncSession = Depe
 
 @plan_management_router.delete(
     "/{plan_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
     description=f"Delete plan, required permissions: {Permissions.PLAN_ALL_DELETE.value}",
     dependencies=[Depends(require_permissions(Permissions.PLAN_ALL_DELETE))],
 )
@@ -74,7 +74,7 @@ async def delete_plan(plan_id: int, db: AsyncSession = Depends(get_db)):
     deleted = await service.delete(plan_id)
     if not deleted:
         raise problem.NotFoundProblem(detail="Plan not found")
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_200_OK)
 
 
 @plan_management_router.post(
