@@ -50,13 +50,14 @@ class ConsoleLogger:
                 "traceback": exc.traceback or None
             }
 
+        # Добавляем extra данные если включено
         if self.include_extra:
             extra = record.get("extra")
             if extra:
                 doc["extra"] = extra
 
         # Выводим в консоль в формате JSON для Loki
-        print(json.dumps(doc, ensure_ascii=False))
+        print(json.dumps(doc, ensure_ascii=False), flush=True)
 
 
 def setup_logging(

@@ -1,6 +1,12 @@
 # Базовый образ
 FROM python:3.13-slim
 
+
+ENV POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_NO_INTERACTION=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 # Установка зависимостей системы + postgresql-client (для pg_isready)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
