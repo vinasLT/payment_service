@@ -21,7 +21,7 @@ class StripeService:
         self.cancel_url = cancel_url
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
-    def create_checkout_session(self, product: Product) -> Session:
+    def create_checkout_session(self, product: Product, metadata: dict | None = None) -> Session:
         try:
             session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
@@ -29,6 +29,7 @@ class StripeService:
                 line_items=[product.model_dump()],
                 success_url=self.success_url,
                 cancel_url=self.cancel_url,
+                metadata=metadata,
             )
             return session
         except stripe.error.StripeError as e:

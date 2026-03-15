@@ -12,6 +12,12 @@ from database.crud.payment import PaymentService
 from database.db.session import get_db
 from database.models.payment import Payment
 from database.schemas.payment import Purposes, PaymentUpdate, PaymentStatus
+from database.crud.plan import PlanService
+from database.crud.transaction import TransactionService
+from database.crud.user_account import UserAccountService
+from database.models.transaction import TransactionType
+from database.schemas.transaction import TransactionCreate
+from database.schemas.user_account import UserAccountUpdate
 from services.rabbit_service import RabbitMQPublisher
 from services.stripe_service.service import StripeService
 
@@ -46,6 +52,12 @@ async def stripe_webhook(
 
     data = StripeService.decode_webhook(event)
     session: Payment = await payment_service.get_by_provider_payment_id(data.checkout_id)
+    if session is None:
+        logger.warning(
+            "Stripe webhook received for unknown checkout session id=%s",
+            data.checkout_id,
+        )
+        return JSONResponse({"success": False})
     if event_type == "checkout.session.completed":
         logger.info(f"Checkout session completed event received")
         if session.status != PaymentStatus.COMPLETED:
@@ -66,6 +78,37 @@ async def stripe_webhook(
                 }
                 logger.info(f"Payload: {payload}")
                 await rabbit_service.publish(routing_key=routing_key, payload=payload)
+            elif session.purpose == Purposes.PLAN_PURCHASE:
+                plan_service = PlanService(db)
+                plan_id = session.purpose_external_id
+                plan = await plan_service.get(int(plan_id))
+                if not plan:
+                    logger.error(f"Plan not found for id {plan_id}")
+                    return JSONResponse({"success": False})
+
+                account_service = UserAccountService(db)
+                account = await account_service.get_by_user_uuid(session.user_external_id)
+                if not account:
+                    logger.error(f"User account not found for uuid {session.user_external_id}")
+                    return JSONResponse({"success": False})
+
+                transaction_service = TransactionService(db)
+                await transaction_service.create(
+                    TransactionCreate(
+                        user_account_id=account.id,
+                        plan_id=plan.id,
+                        transaction_type=TransactionType.PLAN_PURCHASE,
+                        amount=plan.bid_power,
+                    )
+                )
+
+                await account_service.update(
+                    account.id,
+                    UserAccountUpdate(
+                        plan_id=plan.id,
+                        balance=plan.bid_power,
+                    ),
+                )
 
 
     elif event_type == "checkout.session.expired":
