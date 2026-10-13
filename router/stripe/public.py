@@ -18,7 +18,7 @@ from database.crud.user_account import UserAccountService
 from database.models.transaction import TransactionType
 from database.schemas.transaction import TransactionCreate
 from database.schemas.user_account import UserAccountUpdate
-from services.rabbit_service import RabbitMQPublisher
+from services.rabbit_service.service import RabbitMQPublisher
 from services.stripe_service.service import StripeService
 
 

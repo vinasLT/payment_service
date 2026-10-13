@@ -17,6 +17,10 @@ class Permissions(str, Enum):
     ACCOUNT_OWN_READ = 'payments.plan.own:read'
     ACCOUNT_OWN_WRITE = 'payments.plan.own:write'
 
+    REFERRAL_WALLET_OWN_READ = 'payments.referral_wallet.own:read'
+    REFERRAL_WALLET_ALL_READ = 'payments.referral_wallet.all:read'
+    REFERRAL_WALLET_ALL_WRITE = 'payments.referral_wallet.all:write'
+
 
 class Environment(str, Enum):
     DEVELOPMENT = "development"
@@ -43,6 +47,9 @@ class Settings(BaseSettings):
     # rabbitmq
     RABBITMQ_URL: str = 'amqp://guest:guest@localhost:5672/'
     RABBITMQ_EXCHANGE_NAME: str = 'events'
+    RABBITMQ_QUEUE_NAME: str = 'payments.referral_wallet'
+
+    REFERRAL_CURRENCY: str = 'EUR'
 
     #rpc
     GRPC_SERVER_PORT: int = 50053

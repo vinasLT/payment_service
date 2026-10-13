@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -42,10 +43,18 @@ def client(monkeypatch):
 
     monkeypatch.setattr(private.asyncio, "to_thread", immediate_to_thread)
 
-    with TestClient(app) as test_client:
-        yield test_client
+    @asynccontextmanager
+    async def _skip_rabbit_lifespan(_app):
+        yield
 
-    app.dependency_overrides.clear()
+    original_lifespan = app.router.lifespan_context
+    app.router.lifespan_context = _skip_rabbit_lifespan
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.router.lifespan_context = original_lifespan
+        app.dependency_overrides.clear()
 
 
 def _patch_service(monkeypatch, service_name: str, instance):

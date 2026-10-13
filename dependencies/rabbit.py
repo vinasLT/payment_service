@@ -1,6 +1,6 @@
 from typing import AsyncGenerator
 
-from services.rabbit_service import RabbitMQPublisher
+from services.rabbit_service.service import RabbitMQPublisher
 
 
 async def get_rabbit_mq_service() -> AsyncGenerator[RabbitMQPublisher, None]:
