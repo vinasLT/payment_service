@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from aio_pika import connect_robust
 from fastapi import FastAPI, APIRouter
+from fastapi_pagination import add_pagination
 from fastapi_problem.handler import new_exception_handler, add_exception_handler
 
 from config import settings
@@ -88,6 +89,7 @@ app.include_router(public_endpoints)
 app.include_router(private_endpoints)
 
 app.include_router(health_router)
+add_pagination(app)
 
 
 if __name__ == '__main__':
